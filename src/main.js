@@ -4,11 +4,16 @@ const app = express();
 const fileUploader = require('express-fileupload');
 const handleImage = require('./handleImage');
 const config = require('../password.json'); // TODO: Add an actual database for this. << this is trash.
-
+const https = require('https');
+const fs = require('fs');
+const { join } = require('path');
 // middleware
 app.use(fileUploader());
-app.use('/images', express.static('images'));
-
+//app.use('/images', express.static('images'));
+app.use(
+	'/images',
+	express.static('images', { index: false, extensions: ['png'] })
+);
 // handle request
 app.post('/api/upload', (req, res) => {
 	// Test for auth
@@ -21,10 +26,17 @@ app.post('/api/upload', (req, res) => {
 	const { id: filename, extension, error } = handleImage(image, res);
 	// send response if no error
 	if (!error) return res.send({ filename, extension });
+	else console.log(error);
 });
 
 const port = process.env.PORT || 80;
-
-app.listen(port, () => {
-	console.log(`Server started on port http://localhost:${port}!`);
-});
+https
+	.createServer(
+		{
+			key: fs.readFileSync(join(process.cwd(), '/key.pem')),
+			cert: fs.readFileSync(join(process.cwd(), '/cert.pem'))
+		},
+		app
+	)
+	.listen(443);
+console.log('Server started!');
