@@ -1,5 +1,5 @@
 # sharex-image-host
-Basic sharex image host written in js using express and express-fileupload.
+Minimal ShareX image host written in js using express and express-fileupload.
 
 ## Installation
 `npm i` to install dependencies
