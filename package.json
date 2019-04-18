@@ -4,7 +4,7 @@
 	"description": "Minimal ShareX image host written in js using express and express-fileupload.",
 	"author": "developerrebel <cssherwood03@gmail.com> (https://github.com/developerrebel)",
 	"contributors": [
-		"Raven <raven@farfrom.earth> (farfrom.earth)",
+		"Raven <raven@farfrom.earth> (farfrom.earth)"
 	],
 	"main": "src/main.js",
 	"license": "MIT",
