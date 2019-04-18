@@ -35,7 +35,7 @@ Response: 200
 }
 ```
 
-> After that, the image will be available at yourdomain.com/:filename
+> After that, the image will be available at yourdomain.com/i/:filename
 
 ---
 
