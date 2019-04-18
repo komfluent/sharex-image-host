@@ -1,30 +1,32 @@
-// imports
 const express = require('express');
 const app = express();
-const fileUploader = require('express-fileupload');
-const handleImage = require('./handleImage');
-const config = require('../password.json'); // TODO: Add an actual database for this. << this is trash.
 
-// middleware
-app.use(fileUploader());
+require('dotenv').config();
+
+const { existsSync, mkdirSync } = require('fs');
+const { join } = require('path');
+
+const uploadDir = join(process.cwd(), 'images');
+if (!existsSync(uploadDir)) mkdirSync(uploadDir);
+
+app.use(require('express-fileupload'));
 app.use('/images', express.static('images'));
 
-// handle request
 app.post('/api/upload', (req, res) => {
-	// Test for auth
-	if (req.headers.authorization !== config.password)
+
+	if (req.headers.authorization !== process.env.IMAGE_AUTH) {
 		return res
-			.status(403)
-			.send({ code: 403, message: 'invalid authentication credentials!' });
-	const image = req.files.image;
-	// write image to file
-	const { id: filename, extension, error } = handleImage(image, res);
-	// send response if no error
+			.status(401)
+			.send({ code: 401, message: 'Invalid authentication credentials!' });
+	}
+
+	const { image } = req.files;
+	const { id: filename, extension, error } = require('./handleImage')(image, res);
 	if (!error) return res.send({ filename, extension });
 });
 
-const port = process.env.PORT || 80;
+const port = parseInt(process.env.PORT) || 4000;
 
 app.listen(port, () => {
-	console.log(`Server started on port http://localhost:${port}!`);
+	console.log(`Serving on port ${port}!`);
 });

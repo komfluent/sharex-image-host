@@ -2,7 +2,7 @@
 	"name": "image-uploader",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "src/main.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -10,6 +10,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"dotenv": "^7.0.0",
 		"express": "^4.16.4",
 		"express-fileupload": "^1.1.1-alpha.3",
 		"shortid": "^2.2.14"
