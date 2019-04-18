@@ -17,6 +17,8 @@ Response: 200
 
 > After that, the image will be available at yourdomain.com/:filename
 
+---
+
 ### `DELETE /:image`
 Headers: `Authorization: YOUR_PASSWORD`
 
