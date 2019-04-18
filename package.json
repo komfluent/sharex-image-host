@@ -1,17 +1,16 @@
 {
-	"name": "image-uploader",
+	"name": "sharex-image-host",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"description": "Minimal ShareX image host written in js using express and express-fileupload.",
+	"author": "developerrebel <cssherwood03@gmail.com> (https://github.com/developerrebel)",
+	"contributors": [
+		"Raven <raven@farfrom.earth> (farfrom.earth)"
+	],
+	"main": "src/main.js",
+	"license": "MIT",
 	"dependencies": {
+		"dotenv": "^7.0.0",
 		"express": "^4.16.4",
-		"express-fileupload": "^1.1.1-alpha.3",
-		"shortid": "^2.2.14"
+		"express-fileupload": "^1.1.1-alpha.3"
 	}
 }
