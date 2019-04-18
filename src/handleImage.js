@@ -1,8 +1,7 @@
 const fs = require('fs');
-const shortID = require('shortid');
 module.exports = (image, res) => {
 	const extension = image.name.split('.')[1];
-	const id = shortID.generate();
+	const id = new Date.getTime().toString(36);
 	const error = false;
 	fs.writeFile(`./images/${id}.${extension}`, image.data, err =>
 		err
