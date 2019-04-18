@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
-
 require('dotenv').config();
-
 const { existsSync, mkdirSync, writeFileSync, unlinkSync } = require('fs');
 const { join } = require('path');
 
@@ -22,33 +20,60 @@ function handleImage(image, res) {
 	return { id };
 }
 
+app.use(require('./logging'));
 app.use(require('express-fileupload')());
-app.use('/', express.static('images'));
 
 app.get('/', (req, res) => {
-	return res
-		.status(404)
-		.send({
+	return res.status(404).send({
+		code: 404,
+		message: 'Cannot GET /. Use POST /upload for image uploading.'
+	});
+});
+
+app.get('/i/:id', (req, res) => {
+	const files = fs.readdirSync(join(process.cwd(), '/images'));
+	const file = files.find(el => el.startsWith(req.params.id));
+	if (file) {
+		res.sendFile(join(process.cwd(), 'images', file));
+		if (req.query.download) {
+			res.download(join(process.cwd(), 'images', file));
+		}
+	} else {
+		return res.status(404).send({
 			code: 404,
-			message: 'Cannot GET /. Use POST /upload for image uploading.'
+			message: `Cannot GET /i/${
+				req.params.id
+			}. Use POST /upload for image uploading.`
 		});
+	}
 });
 
 app.post('/upload', (req, res) => {
-	if (req.headers.authorization !== process.env.IMAGE_AUTH) {
+	if (
+		process.env.IMAGE_AUTH.split(', ').some(
+			password => password !== req.get('authorization')
+		)
+	) {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
 	}
-
 	const { image } = req.files;
 	const { id: filename } = handleImage(image, res);
-	if (filename) return res.send({ filename });
+	if (filename)
+		return () => {
+			res.send({ filename });
+			res.imageID = filename;
+		};
 	return res.status(500).send({ code: 500, message: 'Internal server error.' });
 });
 
 app.delete('/:file', (req, res) => {
-	if (req.headers.authorization !== process.env.IMAGE_AUTH) {
+	if (
+		process.env.IMAGE_AUTH.split(', ').some(
+			password => password !== req.get('authorization')
+		)
+	) {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
