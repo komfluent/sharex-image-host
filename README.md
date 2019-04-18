@@ -31,11 +31,12 @@ Response: 200
 
 ```json
 {
-	"filename": "example.png"
+	"filename": "example"
 }
 ```
 
 > After that, the image will be available at yourdomain.com/i/:filename
+> You can also append ?download=true to the end of the url to download the image
 
 ---
 

@@ -4,7 +4,8 @@ const { request, response } = require('express');
  * @param {request} req The request object for an express request
  * @param {response} res The response object for an express request
  */
-module.exports = function log(req, res) {
+module.exports = function log(req, res, next) {
+	next();
 	const isUpload = req.url.split('/').includes('upload');
 	res.addListener('finish', () => {
 		console.log(

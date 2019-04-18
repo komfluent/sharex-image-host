@@ -14,7 +14,7 @@ if (!existsSync(uploadDir)) {
 
 function handleImage(image, res) {
 	const extension = image.name.split('.')[1];
-	const id = new Date().getTime().toString(36) + '.' + extension;
+	const id = new Date().getTime().toString(36);
 	writeFileSync(`./images/${id}`, image.data);
 	console.log(`+ ${id} (${image.name})`);
 	return { id };
@@ -51,42 +51,45 @@ app.get('/i/:id', (req, res) => {
 app.post('/upload', (req, res) => {
 	if (
 		process.env.IMAGE_AUTH.split(', ').some(
-			password => password !== req.get('authorization')
+			password => password === req.get('authorization')
 		)
 	) {
+		const { image } = req.files;
+		const { id: filename } = handleImage(image, res);
+		if (filename)
+			return (() => {
+				res.send({ filename });
+				res.imageID = filename;
+			})();
+		return res
+			.status(500)
+			.send({ code: 500, message: 'Internal server error.' });
+	} else {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
 	}
-	const { image } = req.files;
-	const { id: filename } = handleImage(image, res);
-	if (filename)
-		return () => {
-			res.send({ filename });
-			res.imageID = filename;
-		};
-	return res.status(500).send({ code: 500, message: 'Internal server error.' });
 });
 
 app.delete('/:file', (req, res) => {
 	if (
 		process.env.IMAGE_AUTH.split(', ').some(
-			password => password !== req.get('authorization')
+			password => password === req.get('authorization')
 		)
 	) {
+		const { file } = req.params;
+
+		unlinkSync(join(process.cwd(), 'images', file));
+		console.log(`- ${file}`);
+
+		return res
+			.status(204)
+			.send({ code: 204, message: `Successfully deleted ${file}.` });
+	} else {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
 	}
-
-	const { file } = req.params;
-
-	unlinkSync(join(process.cwd(), 'images', file));
-	console.log(`- ${file}`);
-
-	return res
-		.status(204)
-		.send({ code: 204, message: `Successfully deleted ${file}.` });
 });
 
 app.listen(port, () => {
