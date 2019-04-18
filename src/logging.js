@@ -18,7 +18,11 @@ module.exports = function log(req, res, next) {
 			} ${res.statusMessage} | ${
 				isUpload
 					? `Returned ID: ${res.imageID}`
-					: `Queried Image: ${req.params.id}`
+					: `Queried Image: ${
+							req.params
+								? req.params.id || 'no image with that id'
+								: 'invalid url'
+					  }`
 			}`
 		);
 	});
