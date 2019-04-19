@@ -13,7 +13,7 @@ if (!existsSync(uploadDir)) {
 }
 
 function handleImage(image, res) {
-	const extension = image.name.split('.')[1];
+	const extension = image.name.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
 	const id = new Date().getTime().toString(36);
 	writeFileSync(join(uploadDir, `${id}.${extension}`), image.data);
 	console.log(`+ ${id} (${image.name})`);
